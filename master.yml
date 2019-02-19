@@ -1,0 +1,26 @@
+- hosts: all
+  remote_user: root
+  sudo: yes
+  tasks:
+# install basic tools
+  - name: install UFW 
+    apt: name=ufw state=latest update_cache=yes
+
+  - name: set logging
+    ufw: logging=on
+  - name: allow port 22
+    ufw: rule=allow port=22
+  - name: allow port 8883
+    ufw: rule=allow port=8883
+# install mqtt broker
+  - name: add mosquitto key
+    apt_key: url=http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key state=present
+  - name: add mosquitto repo
+    apt_repository: repo='deb http://repo.mosquitto.org/debian wheezy main' state=present update_cache=yes
+  - name: install mosquitto
+    apt: name=mosquitto state=present
+  - name: Enable service httpd, and not touch the state
+    service:
+      name: mosquitto
+      enabled: yes
+         
